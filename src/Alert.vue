@@ -20,20 +20,20 @@ export default {
     placement: {type: String},
     type: {type: String},
     value: {type: Boolean, default: true },
-    width: {type: String}
+    model : {type: [Number, Object]},
+    width: {type: String},
+    close: {type: Function, default: function() {}}
   },
   data () {
     return {
       val: this.value
     }
   },
-  computed: {
-    durationNum () { return coerce.number(this.duration, DURATION) }
-  },
   watch: {
     val (val) {
-      if (val && this.durationNum > 0) { this._delayClose() }
-      this.$emit('input', val)
+      if(!val) {
+         this.close(this.model)	
+      }
     },
     value (val) {
       if (this.val !== val) {
@@ -42,9 +42,11 @@ export default {
     }
   },
   created () {
-    this._delayClose = delayer(function () {
-      this.val = false
-    }, 'durationNum')
+	if(this.val && this.duration > 0) {
+		setTimeout(()=> {
+			this.val = false
+		}, this.duration)
+	}
   }
 }
 </script>
